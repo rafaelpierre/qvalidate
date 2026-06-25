@@ -139,15 +139,14 @@ SELFCORRECT = page(
 )
 
 METADATA = page(
-    title="tool_output.py — JSON-ready, zero glue",
+    title="tool_output.py — typed pydantic, zero glue",
     gradient="linear-gradient(135deg,#059669 0%,#0d9488 42%,#0891b2 78%,#22d3ee 100%)",
     accent="#7ee787",
     body=(
-        '<span class="k">import</span> dataclasses, json\n'
         '<span class="k">from</span> qvalidate <span class="k">import</span> validate\n\n'
         'r = <span class="f">validate</span>(<span class="s">"</span><span class="a">.util.add</span><span class="s">:{[x;y] x+y}; .util.add[2;3]"</span>)\n\n'
-        '<span class="c"># Every result is a plain dataclass → drop it into any tool schema.</span>\n'
-        'json.<span class="f">dumps</span>(dataclasses.<span class="f">asdict</span>(r))\n\n'
+        '<span class="c"># Every result is a typed pydantic model → it IS your tool schema.</span>\n'
+        'r.<span class="f">model_dump_json</span>()\n\n'
         '<span class="dim">{</span>\n'
         '  <span class="s">"valid"</span>: <span class="ok">true</span>,\n'
         '  <span class="s">"diagnostics"</span>: <span class="dim">[]</span>,\n'

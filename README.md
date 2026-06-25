@@ -73,19 +73,19 @@ def safe_q(generate, prompt, max_tries=3):
 
 ### 2 · Tool-call validator
 
-Every result is a plain `@dataclass`, so `dataclasses.asdict()` gives you a
-JSON-ready payload you can return verbatim from a tool / function call — no glue
-code, no custom serializer.
+Every result is a typed [pydantic](https://docs.pydantic.dev) model, so
+`.model_dump_json()` gives you a JSON-ready payload you can return verbatim from
+a tool / function call — and the model itself doubles as the schema for the
+LLM's tool definition. No glue code, no custom serializer.
 
-<div align="center"><img src="assets/metadata.png" alt="JSON-ready structured output" width="760"/></div>
+<div align="center"><img src="assets/metadata.png" alt="Typed pydantic output" width="760"/></div>
 
 ```python
-import dataclasses, json
 from qvalidate import validate
 
 def validate_q_tool(query: str) -> str:
     """An MCP / function-calling tool the model can invoke directly."""
-    return json.dumps(dataclasses.asdict(validate(query)))
+    return validate(query).model_dump_json()
 ```
 
 ### 3 · Static guardrail in a pipeline
@@ -130,7 +130,7 @@ To avoid false positives that would needlessly block the agent:
 uv add qvalidate          # or:  pip install qvalidate
 ```
 
-Zero runtime dependencies. Python 3.9+.
+One runtime dependency ([pydantic](https://docs.pydantic.dev) v2). Python 3.9+.
 
 ## Usage
 
@@ -146,6 +146,16 @@ r.metadata.references         # identifiers the query uses   → ['px','sz','tra
 r.metadata.namespaces         # e.g. ['.util']
 r.metadata.sql                # [SqlBlock(op='select', table='trades',
                               #           columns=['px','sz','sym'])]
+```
+
+Every result is a fully-typed **pydantic** model — `ValidationResult`,
+`Diagnostic`, `QueryMetadata`, `SqlBlock` — so you get IDE autocomplete,
+validation, and serialisation for free:
+
+```python
+r.model_dump()                # → dict
+r.model_dump_json()           # → JSON string  (ideal tool-call output)
+ValidationResult.model_validate_json(payload)   # ← parse straight back
 ```
 
 Lower-level building blocks are exported too: `tokenize(text)` and
@@ -178,6 +188,17 @@ uv run pytest tests/test_oracle.py
 ```bash
 uv run ruff check        # style + unused-import lint
 uv run ty check          # static type analysis
+```
+
+### Commit hooks
+
+[`prek`](https://prek.j178.dev) runs `ruff format` and `ty check` on the Python
+files staged in each commit (config in [`prek.toml`](prek.toml)) — using the
+project's uv environment without ever syncing or installing:
+
+```bash
+prek install             # wire up the git pre-commit hook
+prek run --all-files     # run the hooks on demand
 ```
 
 ---

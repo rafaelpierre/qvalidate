@@ -72,9 +72,20 @@ def test_metadata_namespace():
     assert ".foo.x" in r.metadata.defined_symbols
 
 
-def test_result_is_json_serialisable():
-    import dataclasses
-    import json
+def test_result_is_typed_and_serialisable():
+    from qvalidate import Diagnostic, QueryMetadata, SqlBlock, ValidationResult
 
     r = validate("select a from t")
-    json.dumps(dataclasses.asdict(r))  # must not raise
+
+    # Typed pydantic models, not loose dicts.
+    assert isinstance(r, ValidationResult)
+    assert isinstance(r.metadata, QueryMetadata)
+    assert all(isinstance(d, Diagnostic) for d in r.diagnostics)
+    assert all(isinstance(b, SqlBlock) for b in r.metadata.sql)
+
+    # First-class serialisation, no dataclasses.asdict glue.
+    assert isinstance(r.model_dump(), dict)
+    assert r.model_dump_json()  # JSON string, must not raise
+
+    # Round-trips back into a fully-typed model.
+    assert ValidationResult.model_validate_json(r.model_dump_json()) == r

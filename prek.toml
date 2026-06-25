@@ -1,0 +1,15 @@
+# prek <https://prek.j178.dev> commit hooks.
+#
+# Both hooks run via the project's uv environment WITHOUT syncing/installing
+# (`--no-sync`), and — being pre-commit hooks with `pass_filenames` — receive
+# only the Python files staged in the commit, so nothing else is touched.
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "local"
+hooks = [
+    # `ruff format` reformats in place and exits 0 on success.
+    { id = "ruff-format", name = "ruff format", entry = "uv run --no-sync ruff format", language = "system", types = ["python"], exclude = "^assets/", require_serial = true },
+    # `ty check` type-checks the staged files.
+    { id = "ty-check", name = "ty check", entry = "uv run --no-sync ty check", language = "system", types = ["python"], exclude = "^assets/", require_serial = true },
+]

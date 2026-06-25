@@ -62,7 +62,9 @@ ExitCommentBegin = TokenType(
 StringBegin = TokenType("StringBegin", r'"', push_mode="string_mode")
 StringEnd = TokenType("StringEnd", r'"', pop_mode=True)
 TestBegin = TokenType(
-    "TestBegin", r"(?<!.)[ \t]*(x?feature)\b(.*)", flags=re.IGNORECASE,
+    "TestBegin",
+    r"(?<!.)[ \t]*(x?feature)\b(.*)",
+    flags=re.IGNORECASE,
     push_mode="test_mode",
 )
 

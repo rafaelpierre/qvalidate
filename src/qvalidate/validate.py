@@ -57,7 +57,9 @@ _KIND_NAME = {
 _VALID_ESCAPE_CHARS = {"n", "r", "t", "\\", "/", '"'}
 
 
-def _diag(code: str, message: str, token: Token, severity: int = int(Severity.ERROR)):
+def _diag(
+    code: str, message: str, token: Token, severity: Severity = Severity.ERROR
+) -> Diagnostic:
     return Diagnostic(
         code=code,
         message=message,
@@ -166,7 +168,7 @@ def _check_lex_errors(source: Source) -> List[Diagnostic]:
                 column=err.column,
                 end_line=err.line,
                 end_column=err.column,
-                severity=int(Severity.ERROR),
+                severity=Severity.ERROR,
             )
         )
     return diagnostics
@@ -236,5 +238,5 @@ def validate(query: str, *, uri: str = "<query>") -> ValidationResult:
     diagnostics.sort(key=lambda d: (d.line, d.column))
 
     metadata: QueryMetadata = build_metadata(source)
-    valid = not any(d.severity == int(Severity.ERROR) for d in diagnostics)
+    valid = not any(d.severity == Severity.ERROR for d in diagnostics)
     return ValidationResult(valid=valid, diagnostics=diagnostics, metadata=metadata)

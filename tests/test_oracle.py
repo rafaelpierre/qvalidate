@@ -39,7 +39,9 @@ def _all_cases():
     return cases
 
 
-@pytest.mark.parametrize("path", _all_cases(), ids=lambda p: f"{p.parent.name}/{p.stem}")
+@pytest.mark.parametrize(
+    "path", _all_cases(), ids=lambda p: f"{p.parent.name}/{p.stem}"
+)
 def test_matches_q_parser(path):
     query = path.read_text()
     ours = validate(query).valid
