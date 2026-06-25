@@ -55,22 +55,6 @@ fix its own query — all before a single byte reaches kdb+.
 
 <div align="center"><img src="assets/self-correct.png" alt="The agentic self-correction loop" width="760"/></div>
 
-```python
-from qvalidate import validate
-
-def safe_q(generate, prompt, max_tries=3):
-    """Ask the model for a query; only return one q would actually parse."""
-    for _ in range(max_tries):
-        query = generate(prompt)
-        r = validate(query)
-        if r.valid:
-            return query                       # ✅ safe to execute
-        # Hand the model a precise, machine-readable reason to retry.
-        d = r.diagnostics[0]
-        prompt += f"\n\n# Previous query failed: {d.code} — {d.message} at {d.line}:{d.column}. Fix it."
-    raise ValueError("model could not produce a parseable query")
-```
-
 ### 2 · Tool-call validator
 
 Every result is a typed [pydantic](https://docs.pydantic.dev) model, so
