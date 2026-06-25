@@ -191,8 +191,4 @@ PyO3) behind this same API.
 
 ## License
 
-Apache-2.0 (matching the ported kx-vscode sources).
-
-<sub>The README code-window images are generated reproducibly from
-<code>assets/_src/render.py</code> (HTML → Playwright → PNG):
-<code>uv sync --extra docs && uv run playwright install chromium && uv run python assets/_src/render.py</code></sub>
+[Apache-2.0](LICENSE.md) (matching the ported kx-vscode sources).
