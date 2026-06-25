@@ -1,0 +1,1 @@
+update vwap:wsum[sz;px]%sum sz by sym from trades

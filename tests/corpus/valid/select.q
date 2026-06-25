@@ -1,0 +1,1 @@
+select px, sz from trades where sym=`AAPL, px>0

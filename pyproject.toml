@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "qvalidate"
+version = "0.1.0"
+description = "Validate generated kdb/q queries for agent tools: parse-time error detection plus structured query metadata."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+authors = [{ name = "kx-vscode port" }]
+keywords = ["kdb", "q", "kdb+", "validation", "agent", "llm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7", "pytest-cov>=4"]
+oracle = ["pykx>=2"]
+docs = ["playwright>=1.40"]  # regenerate README code-window images
+
+[dependency-groups]
+dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.6", "ty>=0.0.1a1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/qvalidate"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=qvalidate --cov-report=term-missing --cov-fail-under=80"
+
+[tool.coverage.run]
+source = ["qvalidate"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
